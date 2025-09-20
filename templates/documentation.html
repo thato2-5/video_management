@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Manager App - Architecture Diagrams</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.2rem;
+        }
+
+        .diagrams-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .diagram-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .diagram-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .diagram-title {
+            color: #667eea;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+
+        .diagram {
+            background: #f8f9ff;
+            border-radius: 10px;
+            padding: 1.5rem;
+            min-height: 400px;
+            overflow: auto;
+        }
+
+        .description {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #f8f9ff;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .description h4 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .description ul {
+            list-style: none;
+            padding-left: 1rem;
+        }
+
+        .description li {
+            margin-bottom: 0.5rem;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .description li:before {
+            content: "•";
+            color: #667eea;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #5a67d8;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .diagrams-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Video Manager App Architecture</h1>
+            <p class="subtitle">Comprehensive System Diagrams and Documentation</p>
+        </header>
+
+        <div class="diagrams-grid">
+            <!-- System Architecture Diagram -->
+            <div class="diagram-card">
+                <h3 class="diagram-title">System Architecture</h3>
+                <div class="diagram">
+                    <div class="mermaid">
+flowchart TD
+    subgraph ClientSide [Client Side]
+        Browser[Web Browser]
+        UI[User Interface<br>HTML/CSS/JS]
+    end
+
+    subgraph ServerSide [Server Side - Flask]
+        WebServer[Flask Web Server]
+        Routes[Route Handlers]
+        Forms[WTForms Validation]
+    end
+
+    subgraph DataLayer [Data Layer]
+        DB[SQLite Database]
+        Models[SQLAlchemy Models]
+        FileSystem[File System Storage]
+    end
+
+    Browser -->|HTTP Requests| WebServer
+    WebServer -->|Renders| UI
+    WebServer -->|Processes| Routes
+    Routes -->|Validates| Forms
+    Routes -->|CRUD Operations| Models
+    Models -->|Database Operations| DB
+    Routes -->|File Operations| FileSystem
+
+    classDef client fill:#e1f5fe,stroke:#01579b
+    classDef server fill:#f3e5f5,stroke:#4a148c
+    classDef data fill:#e8f5e8,stroke:#1b5e20
+    
+    class ClientSide client
+    class ServerSide server
+    class DataLayer data
+                    </div>
+                </div>
+                <div class="description">
+                    <h4>Architecture Overview</h4>
+                    <ul>
+                        <li>Three-tier architecture: Client, Server, Data layers</li>
+                        <li>Flask handles HTTP requests and business logic</li>
+                        <li>SQLAlchemy ORM for database operations</li>
+                        <li>File system storage for uploaded videos</li>
+                        <li>Responsive web interface for user interaction</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Database Schema Diagram -->
+            <div class="diagram-card">
+                <h3 class="diagram-title">Database Schema</h3>
+                <div class="diagram">
+                    <div class="mermaid">
+erDiagram
+    VIDEO {
+        int id PK
+        string filename
+        string original_filename
+        string file_path
+        int file_size
+        float duration
+        datetime upload_date
+        boolean selected
+    }
+
+    VIDEO ||--o{ UPLOAD_SESSION : contains
+    VIDEO ||--o{ SELECTION : includes
+
+    UPLOAD_SESSION {
+        int id PK
+        datetime session_date
+        int total_files
+        int total_size
+    }
+
+    SELECTION {
+        int id PK
+        datetime selection_date
+        int selected_count
+    }
+                    </div>
+                </div>
+                <div class="description">
+                    <h4>Database Structure</h4>
+                    <ul>
+                        <li>Video table stores metadata for uploaded videos</li>
+                        <li>File paths, sizes, and selection status tracked</li>
+                        <li>Timestamps for upload and selection events</li>
+                        <li>Scalable design for future feature additions</li>
+                        <li>Relationships support session and selection tracking</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Upload Sequence Diagram -->
+            <div class="diagram-card">
+                <h3 class="diagram-title">Video Upload Process</h3>
+                <div class="diagram">
+                    <div class="mermaid">
+sequenceDiagram
+    participant User as User
+    participant Browser as Web Browser
+    participant Flask as Flask Server
+    participant Validation as File Validation
+    participant FS as File System
+    participant DB as Database
+
+    User->>Browser: Select video files
+    Browser->>Flask: POST /upload (multipart)
+    Flask->>Validation: Check file type/size
+    Validation-->>Flask: Validation result
+    
+    alt Validation Failed
+        Flask-->>Browser: Error response
+    else Validation Passed
+        loop For Each File
+            Flask->>FS: Save file to uploads/
+            FS-->>Flask: File saved confirmation
+            Flask->>DB: Create video record
+            DB-->>Flask: Record created
+        end
+        Flask-->>Browser: Success response
+    end
+    
+    Browser-->>User: Upload confirmation
+                    </div>
+                </div>
+                <div class="description">
+                    <h4>Upload Workflow</h4>
+                    <ul>
+                        <li>Multi-file upload support with validation</li>
+                        <li>File type and size checking</li>
+                        <li>Automatic file renaming to prevent conflicts</li>
+                        <li>Database transaction for metadata storage</li>
+                        <li>Error handling and user feedback</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Selection Flow Diagram -->
+            <div class="diagram-card">
+                <h3 class="diagram-title">Video Selection Flow</h3>
+                <div class="diagram">
+                    <div class="mermaid">
+flowchart LR
+    Start[User Action] -->|Click Select| Request[AJAX Request]
+    Request -->|POST /select_video| Server[Flask Server]
+    
+    subgraph ServerProcess [Server Processing]
+        Auth[Authentication]
+        Validation[ID Validation]
+        Update[Update Selection]
+        Commit[Database Commit]
+    end
+
+    Server --> Auth
+    Auth --> Validation
+    Validation -->|Video exists| Update
+    Update --> Commit
+    Commit --> Response[JSON Response]
+    
+    Response -->|Success| Client[Client Update]
+    Client -->|Update UI| Feedback[User Feedback]
+    
+    Validation -->|Invalid ID| Error[Error Response]
+    Error -->|Show alert| Client
+
+    classDef success fill:#e8f5e8,stroke:#1b5e20
+    classDef error fill:#ffebee,stroke:#c62828
+    
+    class Client success
+    class Error error
+                    </div>
+                </div>
+                <div class="description">
+                    <h4>Selection Process</h4>
+                    <ul>
+                        <li>AJAX-based selection toggling</li>
+                        <li>Real-time UI updates without page reload</li>
+                        <li>Database transaction integrity</li>
+                        <li>Error handling and user notifications</li>
+                        <li>RESTful API design for selection management</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Component Diagram -->
+            <div class="diagram-card">
+                <h3 class="diagram-title">Application Components</h3>
+                <div class="diagram">
+                    <div class="mermaid">
+flowchart TB
+    subgraph Frontend [Frontend Components]
+        Templates[Jinja2 Templates]
+        Static[Static Files<br>CSS/JS/Images]
+        Forms[Web Forms]
+    end
+
+    subgraph Backend [Backend Components]
+        App[Flask Application]
+        Routes[Route Handlers]
+        Config[Configuration]
+        Utils[Utility Functions]
+    end
+
+    subgraph Data [Data Components]
+        Models[Database Models]
+        Migrations[Database Migrations]
+        FileManager[File Manager]
+    end
+
+    subgraph Services [External Services]
+        Database[SQLite Database]
+        Storage[File Storage]
+        Validation[File Validation Service]
+    end
+
+    Frontend -->|HTTP Requests| Backend
+    Backend -->|Data Operations| Data
+    Data -->|Storage| Services
+    Backend -->|Uses| Services
+
+    classDef front fill:#e1f5fe,stroke:#01579b
+    classDef back fill:#f3e5f5,stroke:#4a148c
+    classDef data fill:#e8f5e8,stroke:#1b5e20
+    classDef service fill:#fff3e0,stroke:#e65100
+    
+    class Frontend front
+    class Backend back
+    class Data data
+    class Services service
+                    </div>
+                </div>
+                <div class="description">
+                    <h4>Component Architecture</h4>
+                    <ul>
+                        <li>Modular component design</li>
+                        <li>Separation of concerns between layers</li>
+                        <li>Reusable utility functions</li>
+                        <li>External service integration points</li>
+                        <li>Scalable architecture for future enhancements</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Deployment Diagram -->
+            <div class="diagram-card">
+                <h3 class="diagram-title">Deployment Architecture</h3>
+                <div class="diagram">
+                    <div class="mermaid">
+flowchart LR
+    User[End User] -->|HTTP/HTTPS| LB[Load Balancer<br>Nginx]
+    
+    subgraph ServerCluster [Server Cluster]
+        WSGI1[Gunicorn Worker 1]
+        WSGI2[Gunicorn Worker 2]
+        WSGI3[Gunicorn Worker 3]
+    end
+
+    subgraph StorageLayer [Storage Layer]
+        DB[PostgreSQL Database]
+        FS[Shared File Storage<br>Amazon S3 / NFS]
+        Cache[Redis Cache]
+    end
+
+    LB --> WSGI1
+    LB --> WSGI2
+    LB --> WSGI3
+    
+    WSGI1 --> DB
+    WSGI2 --> DB
+    WSGI3 --> DB
+    
+    WSGI1 --> FS
+    WSGI2 --> FS
+    WSGI3 --> FS
+    
+    WSGI1 --> Cache
+    WSGI2 --> Cache
+    WSGI3 --> Cache
+
+    classDef user fill:#e1f5fe,stroke:#01579b
+    classDef server fill:#f3e5f5,stroke:#4a148c
+    classDef storage fill:#e8f5e8,stroke:#1b5e20
+    
+    class User user
+    class ServerCluster,LB server
+    class StorageLayer storage
+                    </div>
+                </div>
+                <div class="description">
+                    <h4>Production Deployment</h4>
+                    <ul>
+                        <li>Load-balanced architecture for scalability</li>
+                        <li>WSGI server for production deployment</li>
+                        <li>Shared storage for horizontal scaling</li>
+                        <li>Caching layer for performance optimization</li>
+                        <li>Database replication for high availability</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <h3>Video Manager App Documentation</h3>
+            <p>Built with Flask, SQLAlchemy, and modern web technologies</p>
+            <div class="controls">
+                <button class="btn" onclick="refreshDiagrams()">Refresh Diagrams</button>
+                <button class="btn" onclick="window.print()">Print Documentation</button>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Initialize Mermaid.js
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            securityLevel: 'loose',
+            fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif',
+            flowchart: {
+                useMaxWidth: false,
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
+
+        // Function to refresh all diagrams
+        function refreshDiagrams() {
+            const diagrams = document.querySelectorAll('.mermaid');
+            diagrams.forEach(diagram => {
+                const content = diagram.innerHTML;
+                diagram.innerHTML = content;
+            });
+            mermaid.init(undefined, '.mermaid');
+            alert('Diagrams refreshed successfully!');
+        }
+
+        // Add error handling for Mermaid
+        mermaid.parseError = function(err, hash) {
+            console.error('Mermaid parsing error:', err);
+        };
+
+        // Make diagrams responsive
+        window.addEventListener('resize', function() {
+            mermaid.init(undefined, '.mermaid');
+        });
+    </script>
+</body>
+</html>
+
